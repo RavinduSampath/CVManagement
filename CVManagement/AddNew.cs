@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace CVManagement
 {
-    public partial class Home : Form
+    public partial class AddNew : Form
     {
-        public Home()
+        public AddNew()
         {
             InitializeComponent();
         }
 
-        private void Home_Load(object sender, EventArgs e)
+        private void AddNew_Load(object sender, EventArgs e)
         {
 
         }
@@ -27,7 +27,7 @@ namespace CVManagement
 
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
 
         }
