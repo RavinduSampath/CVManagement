@@ -17,7 +17,7 @@ namespace CVManagement.Repositoris
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    string query = "SELECT * FROM Details ORDER BY Id DESC";
+                    string query = "SELECT * FROM Details ORDER BY Marks DESC";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         using (SqlDataReader reader = cmd.ExecuteReader())

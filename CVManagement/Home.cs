@@ -1,4 +1,5 @@
-﻿using CVManagement.Repositoris;
+﻿using CVManagement.Models;
+using CVManagement.Repositoris;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,11 +29,11 @@ namespace CVManagement
             dt.Columns.Add("Email");
             dt.Columns.Add("Address");
             dt.Columns.Add("Phone");
-            dt.Columns.Add("Document");
-
+            dt.Columns.Add("Resume"); // This will represent the resume link
 
             var repo = new CandidateRepository();
             var candidates = repo.GetAllCandidates();
+
             foreach (var candidate in candidates)
             {
                 var row = dt.NewRow();
@@ -45,18 +46,56 @@ namespace CVManagement
                 row["Email"] = candidate.Email;
                 row["Address"] = candidate.Address;
                 row["Phone"] = candidate.Phone;
-                row["Document"] = candidate.Resume;
+                row["Resume"] = candidate.Resume; // Assuming this is the path to the resume
                 dt.Rows.Add(row);
             }
+
             this.Candidates.DataSource = dt;
 
+            // Check if the Resume column already exists to avoid adding it multiple times
+            if (this.Candidates.Columns.Contains("Resume"))
+            {
+                DataGridViewLinkColumn linkColumn = new DataGridViewLinkColumn();
+                linkColumn.HeaderText = "Resume"; // The column header
+                linkColumn.DataPropertyName = "Resume"; // Binds to the resume/document path
+                linkColumn.Name = "Resume";
+                linkColumn.Text = "View Resume";  // The display text in the link
+                linkColumn.UseColumnTextForLinkValue = true; // Use the same text for all rows
+                this.Candidates.Columns.Add(linkColumn);
+            }
 
+
+            // Ensure the event handler is registered only once
+            this.Candidates.CellContentClick -= Candidates_CellContentClick; // Unsubscribe first
+            this.Candidates.CellContentClick += Candidates_CellContentClick; // Then subscribe
 
         }
+
+        private void Candidates_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Check if the click is on the link column
+            if (this.Candidates.Columns[e.ColumnIndex] is DataGridViewLinkColumn && e.RowIndex >= 0)
+            {
+                // Get the document path from the clicked row
+                string documentPath = this.Candidates.Rows[e.RowIndex].Cells["Resume"].Value.ToString();
+
+                try
+                {
+                    // Open the document (PDF, DOC, etc.) with the default system application
+                    System.Diagnostics.Process.Start(documentPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening document: " + ex.Message);
+                }
+            }
+        }
+
         public Home()
         {
             InitializeComponent();
             ReadCandidates();
+
             label2.Text = Count().ToString();
             label3.Text = MarksCount().ToString();
         }
